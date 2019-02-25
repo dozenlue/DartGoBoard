@@ -2,7 +2,39 @@ import 'dart:core';
 import 'dart:typed_data';
 
 // Stone status of a given cross
-enum Stone { None, Black, White }
+enum Stone {
+  None,   // No stone
+  Black,  // black stone
+  White,  // white stone
+  Invalid // Invalid, e.g. the given vertex out of board.
+}
+
+// Vertex presents a given point on a board.
+// (-1, -1) makes a point out of board.
+class Vertex {
+  int x;
+  int y;
+
+  // Default constructor makes a point out of board.
+  Vertex() : x = -1, y = -1;
+
+  Vertex.withXY(this.x, this.y);
+
+  @override
+  int get hashCode {
+    return x ^ y;
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other is! Vertex) {
+      return false;
+    }
+
+    Vertex vertex = other;
+    return vertex.x == x && vertex.y == y;
+  }
+}
 
 // Board simply represents a go game board.
 // Support place/remove white/black stones,
@@ -68,15 +100,25 @@ class Board {
     this._rows = Uint64List.fromList(board._rows);
   }
 
-  // To get board status at given coordinate (x, y)
-  Stone stoneAt(int x, int y) {
-    _assertValid(x, y);
+  bool isVertexValid(Vertex v) {
+    return v.x >= 0 && v.x < boardSize
+      && v.y >= 0 && v.y < boardSize;
+  }
 
-    if (_hasStone(x, y)) {
-      return _isWhite(x, y) ? Stone.White : Stone.Black;
+  // To get board status at given coordinate (x, y)
+  Stone stoneAt(Vertex v) {
+    if (isVertexValid(v)) {
+      int x = v.x;
+      int y = v.y;
+
+      if (_hasStone(x, y)) {
+        return _isWhite(x, y) ? Stone.White : Stone.Black;
+      }
+
+      return Stone.None;
     }
 
-    return Stone.None;
+    return Stone.Invalid;
   }
 
   _assertValid(int x, int y) {
@@ -98,7 +140,9 @@ class Board {
   }
 
   // Place a stone. A [Stone.None] means removing
-  placeStoneAt(Stone stone, int x, int y) {
+  placeStoneAt(Stone stone, Vertex v) {
+    int x = v.x;
+    int y = v.y;
     _assertValid(x, y);
 
     switch (stone) {
@@ -135,6 +179,31 @@ class Board {
     this._rows[y] &= ~(_colorMask[x]);
   }
 
+  // Get all adjacent points
+  List<Vertex> neighborsOf(Vertex v) {
+    List<Vertex> result = List();
+
+    if (isVertexValid(v)) {
+      if (v.x > 0) {
+        result.add(Vertex.withXY(v.x - 1, v.y));
+      }
+
+      if (v.x < boardSize - 1) {
+        result.add(Vertex.withXY(v.x + 1, v.y));
+      }
+
+      if (v.y > 0) {
+        result.add(Vertex.withXY(v.x, v.y - 1));
+      }
+
+      if (v.y < boardSize - 1) {
+        result.add(Vertex.withXY(v.x, v.y + 1));
+      }
+    }
+
+    return result;
+  }
+
   @override
   int get hashCode {
     int shift = 64 - boardSize * 2;
@@ -152,8 +221,8 @@ class Board {
       return false;
     }
 
-    Board board =other;
-    if (board.boardSize !=boardSize) {
+    Board board = other;
+    if (board.boardSize != boardSize) {
       return false;
     }
 
