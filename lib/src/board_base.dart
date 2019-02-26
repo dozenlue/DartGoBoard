@@ -216,6 +216,7 @@ class Board {
     return null;
   }
 
+  // A recursive worker to collect neighbors with the same color
   List<Vertex> _collectConnected(Vertex fromVertex, Stone stone, List<Vertex> result) {
     if (!isVertexValid(fromVertex)) {
       return null;
@@ -235,6 +236,26 @@ class Board {
     }
 
     return result;
+  }
+
+  // Find all liberties from a given point if the point is
+  // black or white.
+  List<Vertex> libertiesFrom(Vertex fromVertex) {
+    List<Vertex> chain = chainFrom(fromVertex);
+    if (chain != null) {
+      List<Vertex> liberties = List<Vertex>();
+      for (Vertex v in chain) {
+        neighborsOf(v).forEach((x) {
+          if (stoneAt(x) == Stone.None && !liberties.contains(x)) {
+            liberties.add(x);
+          }
+        });
+      }
+
+      return liberties;
+    }
+
+    return null;
   }
 
   @override

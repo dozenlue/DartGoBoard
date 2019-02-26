@@ -133,6 +133,103 @@ void main() {
       expect(chain.contains(Vertex.withXY(9, 10)), true);
       expect(chain.contains(Vertex.withXY(11, 11)), true);
     });
-    
+  });
+
+  group('Liberties', () {
+    Board board;
+
+    setUp(() {
+      board = new Board()
+        // single in center
+        ..placeStoneAt(Stone.Black, Vertex.withXY(15, 15))
+        // two adjacent chains
+        ..placeStoneAt(Stone.Black, Vertex.withXY(2, 3))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(3, 3))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(4, 3))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(5, 3))
+        ..placeStoneAt(Stone.White, Vertex.withXY(2, 2))
+        ..placeStoneAt(Stone.White, Vertex.withXY(3, 2))
+        ..placeStoneAt(Stone.White, Vertex.withXY(4, 2))
+        ..placeStoneAt(Stone.White, Vertex.withXY(5, 2))
+        // a 2x2 square in corner
+        ..placeStoneAt(Stone.Black, Vertex.withXY(18, 18))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(18, 17))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(17, 18))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(17, 17))
+        // a white circle in center
+        ..placeStoneAt(Stone.White, Vertex.withXY(9, 9))
+        ..placeStoneAt(Stone.White, Vertex.withXY(10, 9))
+        ..placeStoneAt(Stone.White, Vertex.withXY(11, 9))
+        ..placeStoneAt(Stone.White, Vertex.withXY(9, 11))
+        ..placeStoneAt(Stone.White, Vertex.withXY(10, 11))
+        ..placeStoneAt(Stone.White, Vertex.withXY(11, 11))
+        ..placeStoneAt(Stone.White, Vertex.withXY(9, 10))
+        ..placeStoneAt(Stone.White, Vertex.withXY(11, 10))
+        // a black circle surrounds the white one
+        ..placeStoneAt(Stone.Black, Vertex.withXY(9, 8))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(10, 8))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(11, 8))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(12, 8))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(12, 9))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(12, 10))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(12, 11))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(12, 12))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(11, 12))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(10, 12))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(9, 12))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(8, 12))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(8, 11))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(8, 10))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(8, 9))
+        ..placeStoneAt(Stone.Black, Vertex.withXY(8, 8));
+    });
+
+    test('Black with adjacent white in center', () {
+      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 3));
+      expect(liberties.length, equals(6));
+      expect(liberties.toSet().containsAll([
+        Vertex.withXY(1, 3),
+        Vertex.withXY(6, 3),
+        Vertex.withXY(2, 4),
+        Vertex.withXY(3, 4),
+        Vertex.withXY(4, 4),
+        Vertex.withXY(5, 4),
+      ]), true);
+    });
+
+    test('White with adjacent black in center', () {
+      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 2));
+      expect(liberties.length, equals(6));
+      expect(liberties.toSet().containsAll([
+        Vertex.withXY(1, 2),
+        Vertex.withXY(6, 2),
+        Vertex.withXY(2, 1),
+        Vertex.withXY(3, 1),
+        Vertex.withXY(4, 1),
+        Vertex.withXY(5, 1),
+      ]), true);
+    });
+
+    test('Square In corner', () {
+      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(17, 17));
+      expect(liberties.length, equals(4));
+      expect(liberties.toSet().containsAll([
+        Vertex.withXY(17, 16),
+        Vertex.withXY(18, 16),
+        Vertex.withXY(16, 17),
+        Vertex.withXY(16, 18),
+      ]), true);
+    });
+
+    test('Inner circle in center', () {
+      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(9, 9));
+      expect(liberties.length, equals(1));
+      expect(liberties.contains(Vertex.withXY(10, 10)), true);
+    });
+  
+    test('outer circle In corner', () {
+      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(8, 8));
+      expect(liberties.length, equals(20));
+    });
   });
 }
