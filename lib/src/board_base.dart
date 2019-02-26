@@ -204,6 +204,39 @@ class Board {
     return result;
   }
 
+  // Get all adjacent vertex with the same color of stone
+  List<Vertex> chainFrom(Vertex v) {
+    Stone stone =stoneAt(v);
+    if (stone == Stone.Black || stone == Stone.White) {
+      List<Vertex> result = List<Vertex>()
+        ..add(v);
+      return _collectConnected(v, stone, result);
+    }
+
+    return null;
+  }
+
+  List<Vertex> _collectConnected(Vertex fromVertex, Stone stone, List<Vertex> result) {
+    if (!isVertexValid(fromVertex)) {
+      return null;
+    }
+
+    for (Vertex v in neighborsOf(fromVertex)) {
+      if (result.contains(v)) {
+        continue;
+      }
+
+      if (stone != stoneAt(v)) {
+        continue;
+      }
+
+      result.add(v);
+      _collectConnected(v, stone, result);
+    }
+
+    return result;
+  }
+
   @override
   int get hashCode {
     int shift = 64 - boardSize * 2;
