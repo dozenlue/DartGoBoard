@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:collection';
 import 'package:meta/meta.dart';
 import 'board_base.dart';
 import 'rule_base.dart';
@@ -33,17 +34,29 @@ class GameNode {
 // or the trunk moves, when [orignNode] is null.
 class GameNodeSequence {
   GameNode originNode;
-  List<GameNode> nodes;
+  List<GameNode> _nodes;
   
   GameNodeSequence(this.originNode);
 
   int addNode(GameNode node) {
-    if (nodes == null) {
-      nodes = List<GameNode>();
+    if (_nodes == null) {
+      _nodes = List<GameNode>();
     }
 
-    nodes.add(node);
-    return nodes.length - 1;
+    _nodes.add(node);
+    return _nodes.length - 1;
+  }
+
+  GameNode nodeAt(int index) {
+    if (_nodes == null || index < 0 || index >= _nodes.length) {
+      return null;
+    }
+
+    return _nodes[index];
+  }
+
+  GameNode get lastNode {
+    return _nodes == null ? null : _nodes.last;
   }
 }
 
@@ -72,10 +85,19 @@ class Game {
     _currentSequence = _trunk;
   }
 
-  makeMove(Stone stone, int x, int y) {
-    GameNode newNode =rule.tryMakeMove(_currentSequence, stone, x, y);
+  makeMove(Stone stone, Vertex v) {
+    GameNode newNode = rule.tryMakeMove(_currentSequence, stone, v);
     if (newNode != null) {
       _currentNodeIndex = _currentSequence.addNode(newNode);
     }
   }
+
+  forceMove(Stone stone, Vertex v) {
+
+  }
+
+  GameNode get currentNode {
+    return _currentSequence.nodeAt(_currentNodeIndex);
+  }
+
 }

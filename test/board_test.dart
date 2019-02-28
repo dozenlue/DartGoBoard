@@ -91,20 +91,20 @@ void main() {
     });
 
     test('A single stone in center', () {
-      List<Vertex> chain = board.chainFrom(Vertex.withXY(15, 15));
+      Set<Vertex> chain = board.chainFrom(Vertex.withXY(15, 15));
       expect(chain.length, equals(1));
-      expect(chain[0], equals(Vertex.withXY(15, 15)));
+      expect(chain.contains(Vertex.withXY(15, 15)), true);
     });
 
     test('A few stones in center', () {
-      List<Vertex> blackChain = board.chainFrom(Vertex.withXY(2, 3));
+      Set<Vertex> blackChain = board.chainFrom(Vertex.withXY(2, 3));
       expect(blackChain.length, equals(4));
       expect(blackChain.contains(Vertex.withXY(2, 3)), true);
       expect(blackChain.contains(Vertex.withXY(3, 3)), true);
       expect(blackChain.contains(Vertex.withXY(4, 3)), true);
       expect(blackChain.contains(Vertex.withXY(5, 3)), true);
 
-      List<Vertex> whiteChain = board.chainFrom(Vertex.withXY(2, 2));
+      Set<Vertex> whiteChain = board.chainFrom(Vertex.withXY(2, 2));
       expect(whiteChain.length, equals(4));
       expect(whiteChain.contains(Vertex.withXY(2, 2)), true);
       expect(whiteChain.contains(Vertex.withXY(3, 2)), true);
@@ -113,7 +113,7 @@ void main() {
     });
 
     test('A few stones in corner', () {
-      List<Vertex> blackChain = board.chainFrom(Vertex.withXY(17, 17));
+      Set<Vertex> blackChain = board.chainFrom(Vertex.withXY(17, 17));
       expect(blackChain.length, equals(4));
       expect(blackChain.contains(Vertex.withXY(17, 17)), true);
       expect(blackChain.contains(Vertex.withXY(18, 18)), true);
@@ -122,7 +122,7 @@ void main() {
     });
 
     test('A circle in center', () {
-      List<Vertex> chain = board.chainFrom(Vertex.withXY(9, 9));
+      Set<Vertex> chain = board.chainFrom(Vertex.withXY(9, 9));
       expect(chain.length, equals(8));
       expect(chain.contains(Vertex.withXY(9, 9)), true);
       expect(chain.contains(Vertex.withXY(10, 9)), true);

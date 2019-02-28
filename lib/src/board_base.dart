@@ -180,8 +180,8 @@ class Board {
   }
 
   // Get all adjacent points
-  List<Vertex> neighborsOf(Vertex v) {
-    List<Vertex> result = List();
+  Set<Vertex> neighborsOf(Vertex v) {
+    Set<Vertex> result = Set();
 
     if (isVertexValid(v)) {
       if (v.x > 0) {
@@ -205,10 +205,10 @@ class Board {
   }
 
   // Get all adjacent vertex with the same color of stone
-  List<Vertex> chainFrom(Vertex v) {
-    Stone stone =stoneAt(v);
+  Set<Vertex> chainFrom(Vertex v) {
+    Stone stone = stoneAt(v);
     if (stone == Stone.Black || stone == Stone.White) {
-      List<Vertex> result = List<Vertex>()
+      Set<Vertex> result = Set<Vertex>()
         ..add(v);
       return _collectConnected(v, stone, result);
     }
@@ -217,7 +217,7 @@ class Board {
   }
 
   // A recursive worker to collect neighbors with the same color
-  List<Vertex> _collectConnected(Vertex fromVertex, Stone stone, List<Vertex> result) {
+  Set<Vertex> _collectConnected(Vertex fromVertex, Stone stone, Set<Vertex> result) {
     if (!isVertexValid(fromVertex)) {
       return null;
     }
@@ -241,7 +241,7 @@ class Board {
   // Find all liberties from a given point if the point is
   // black or white.
   List<Vertex> libertiesFrom(Vertex fromVertex) {
-    List<Vertex> chain = chainFrom(fromVertex);
+    Set<Vertex> chain = chainFrom(fromVertex);
     if (chain != null) {
       List<Vertex> liberties = List<Vertex>();
       for (Vertex v in chain) {
