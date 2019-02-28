@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:meta/meta.dart';
 import 'board_base.dart';
 import 'rule_base.dart';
 
@@ -7,16 +8,42 @@ import 'rule_base.dart';
 // holds variations, comments, marks, etc.
 class GameNode {
   Board board;
-  List<GameNode> variantations;
+  List<GameNodeSequence> variantations;
 
-  GameNode() {
-    board = Board();
-    variantations = new List<GameNode>();
+  GameNodeSequence owner;
+
+  GameNode({
+    @required GameNodeSequence owner,
+    int boardSize = Board.defaultBoardSize
+  }) {
+    board = Board(size: boardSize);
   }
 
-  GameNode.fromNode(GameNode orignNode) {
+  GameNode.fromNode({
+    @required GameNode orignNode,
+    GameNodeSequence ownerSequence
+  }) {
     board = Board.fromBoard(orignNode.board);
-    variantations = new List<GameNode>();
+    owner = ownerSequence == null ? orignNode.owner : ownerSequence;
+  }
+}
+
+// A game node sequence represents a sequence of move.
+// Such sequence could be a variantation of a node,
+// or the trunk moves, when [orignNode] is null.
+class GameNodeSequence {
+  GameNode originNode;
+  List<GameNode> nodes;
+  
+  GameNodeSequence(this.originNode);
+
+  int addNode(GameNode node) {
+    if (nodes == null) {
+      nodes = List<GameNode>();
+    }
+
+    nodes.add(node);
+    return nodes.length - 1;
   }
 }
 
@@ -27,18 +54,28 @@ class GameNode {
 // Game uses rules to determine if move is legal
 // or illegal.
 class Game {
-  List<GameNode> _trunk;
+  GameNodeSequence _trunk;
   Rule rule;
+
+  GameNodeSequence _currentSequence;
+  int _currentNodeIndex;
 
   // default constructor creates a game with empty
   // board with default size, and uses default rules.
   Game() {
-    _trunk = List<GameNode>()
-      ..add(GameNode());
-    rule =DefaultGoRule();
+    _trunk = GameNodeSequence(null);
+    GameNode rootNode = GameNode(owner: _trunk);
+    _trunk.addNode(rootNode);
+    rule = DefaultGoRule();
+
+    _currentNodeIndex = 0;
+    _currentSequence = _trunk;
   }
 
   makeMove(Stone stone, int x, int y) {
-    
+    GameNode newNode =rule.tryMakeMove(_currentSequence, stone, x, y);
+    if (newNode != null) {
+      _currentNodeIndex = _currentSequence.addNode(newNode);
+    }
   }
 }
