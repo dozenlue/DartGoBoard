@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:collection';
 import 'package:meta/meta.dart';
 import 'board_base.dart';
 import 'rule_base.dart';

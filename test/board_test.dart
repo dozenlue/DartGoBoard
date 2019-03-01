@@ -185,7 +185,7 @@ void main() {
     });
 
     test('Black with adjacent white in center', () {
-      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 3));
+      Set<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 3));
       expect(liberties.length, equals(6));
       expect(liberties.toSet().containsAll([
         Vertex.withXY(1, 3),
@@ -198,7 +198,7 @@ void main() {
     });
 
     test('White with adjacent black in center', () {
-      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 2));
+      Set<Vertex> liberties = board.libertiesFrom(Vertex.withXY(2, 2));
       expect(liberties.length, equals(6));
       expect(liberties.toSet().containsAll([
         Vertex.withXY(1, 2),
@@ -211,7 +211,7 @@ void main() {
     });
 
     test('Square In corner', () {
-      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(17, 17));
+      Set<Vertex> liberties = board.libertiesFrom(Vertex.withXY(17, 17));
       expect(liberties.length, equals(4));
       expect(liberties.toSet().containsAll([
         Vertex.withXY(17, 16),
@@ -222,13 +222,13 @@ void main() {
     });
 
     test('Inner circle in center', () {
-      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(9, 9));
+      Set<Vertex> liberties = board.libertiesFrom(Vertex.withXY(9, 9));
       expect(liberties.length, equals(1));
       expect(liberties.contains(Vertex.withXY(10, 10)), true);
     });
   
     test('outer circle In corner', () {
-      List<Vertex> liberties = board.libertiesFrom(Vertex.withXY(8, 8));
+      Set<Vertex> liberties = board.libertiesFrom(Vertex.withXY(8, 8));
       expect(liberties.length, equals(20));
     });
   });

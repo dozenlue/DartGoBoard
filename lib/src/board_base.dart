@@ -240,10 +240,10 @@ class Board {
 
   // Find all liberties from a given point if the point is
   // black or white.
-  List<Vertex> libertiesFrom(Vertex fromVertex) {
+  Set<Vertex> libertiesFrom(Vertex fromVertex) {
     Set<Vertex> chain = chainFrom(fromVertex);
     if (chain != null) {
-      List<Vertex> liberties = List<Vertex>();
+      Set<Vertex> liberties = Set<Vertex>();
       for (Vertex v in chain) {
         neighborsOf(v).forEach((x) {
           if (stoneAt(x) == Stone.None && !liberties.contains(x)) {
