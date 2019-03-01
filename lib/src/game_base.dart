@@ -57,6 +57,10 @@ class GameNodeSequence {
   GameNode get lastNode {
     return _nodes == null ? null : _nodes.last;
   }
+
+  GameNode get firstNode {
+    return _nodes == null ? null : _nodes.first;
+  }
 }
 
 // A game is a tree of game nodes. Nodes on trunk
@@ -82,6 +86,10 @@ class Game {
 
     _currentNodeIndex = 0;
     _currentSequence = _trunk;
+  }
+
+  GameNode get rootNode {
+    return _trunk.firstNode;
   }
 
   makeMove(Stone stone, Vertex v) {
